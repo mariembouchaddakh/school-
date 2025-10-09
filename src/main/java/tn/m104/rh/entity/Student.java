@@ -19,6 +19,6 @@ public class Student {
     Integer rollNumber;
     String name;
     String address;
-    Double percentage;
+    Integer percentage;
 
 }
