@@ -11,6 +11,7 @@ import tn.m104.rh.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -22,11 +23,11 @@ class StudentServiceImplTest {
     @InjectMocks
     StudentServiceImpl studentService ;
 
-    Student student = new Student(1, "name1","adress1", 20.00);
+    Student student = new Student(1, "name1","adress1", 20);
     List<Student> listStudents = new ArrayList<Student>() {
         {
-            add(new Student(2, "name2","adress2", 30.00));
-            add(new Student(3, "name3","adress3", 10.00));
+            add(new Student(2, "name2","adress2", 30));
+            add(new Student(3, "name3","adress3", 10));
         }
     };
 
@@ -73,5 +74,71 @@ class StudentServiceImplTest {
     }
 
 */
+
+
+    @Test
+    @Order(2)
+    void testRegisterStudent() {
+
+        // Simulation du save() dans le repository
+        Mockito.when(studentRepository.save(Mockito.any(Student.class)))
+                .thenReturn(student);
+
+        // Appel de la méthode du service
+        Student saved = studentService.registerStudent(student);
+
+        // Vérifications
+        Assertions.assertNotNull(saved);
+        Assertions.assertEquals(1, saved.getRollNumber());
+
+        // Vérifier que save() a été appelé une seule fois
+        Mockito.verify(studentRepository, Mockito.times(1))
+                .save(Mockito.any(Student.class));
+    }
+
+
+
+
+    @Test
+    @Order(3)
+    void testUpdateStudent() {
+
+        // Simuler que findById retourne un étudiant existant
+        Mockito.when(studentRepository.findById(1))
+                .thenReturn(Optional.of(student));
+
+        // Simuler que save retourne l'étudiant mis à jour
+        Mockito.when(studentRepository.save(Mockito.any(Student.class)))
+                .thenReturn(student);
+
+        // Appel de la méthode
+        Student updated = studentService.updateStudent(student);
+
+        // Vérifications
+        Assertions.assertNotNull(updated);
+        Assertions.assertEquals(1, updated.getRollNumber());
+
+        // Vérifier les appels
+        Mockito.verify(studentRepository).findById(1);
+        Mockito.verify(studentRepository).save(Mockito.any(Student.class));
+    }
+
+    @Test
+    @Order(4)
+    void testDeleteStudent() {
+
+        // Simuler deleteById() (qui est void)
+        Mockito.doNothing().when(studentRepository).deleteById(1);
+
+        // Appel méthode
+        studentService.deleteStudent(1);
+
+        // Vérifier que deleteById a été appelé 1 fois
+        Mockito.verify(studentRepository, Mockito.times(1))
+                .deleteById(1);
+    }
+
+
+
 
 }
