@@ -26,7 +26,7 @@ services:
     restart: on-failure
     ports:
       # Port exposé pour accéder à l'application Spring Boot
-      - "8080:8080"
+      - "8089:8089"
     environment:
       # Configuration de la connexion à la base de données pour Spring Boot
       # L'URL utilise le nom du service (mysqldb) comme hôte
