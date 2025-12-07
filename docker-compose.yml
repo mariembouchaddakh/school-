@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 1. Service pour la base de données MySQL
+  mysqldb:
+    image: mysql:8.0 # Utilisation d'une image stable
+    restart: always
+    environment:
+      # Adaptez ces variables d'environnement au besoin
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: school_db # Nom de la base de données
+    ports:
+      # Port exposé pour accéder à la base de données depuis l'extérieur (facultatif)
+      - "3306:3306"
+    volumes:
+      # Assure la persistance des données même si le conteneur est supprimé
+      - db_data:/var/lib/mysql
+
+  # 2. Service pour l'application Spring Boot
+  app-school:
+    # Indique que ce service doit attendre que la base de données soit démarrée
+    depends_on:
+      - mysqldb
+    # Dit à Docker de construire l'image en utilisant le Dockerfile dans le répertoire courant
+    build: .
+    restart: on-failure
+    ports:
+      # Port exposé pour accéder à l'application Spring Boot
+      - "8080:8080"
+    environment:
+      # Configuration de la connexion à la base de données pour Spring Boot
+      # L'URL utilise le nom du service (mysqldb) comme hôte
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/school_db?createDatabaseIfNotExist=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+# 3. Définition des volumes pour la persistance
+volumes:
+  db_data:
