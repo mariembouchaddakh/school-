@@ -11,7 +11,7 @@ services:
       MYSQL_DATABASE: school_db # Nom de la base de données
     ports:
       # Port exposé pour accéder à la base de données depuis l'extérieur (facultatif)
-      - "3306:3306"
+      - "3307:3307"
     volumes:
       # Assure la persistance des données même si le conteneur est supprimé
       - db_data:/var/lib/mysql
